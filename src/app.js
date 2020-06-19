@@ -33,18 +33,20 @@ app.put('/repositories/:id', (request, response) => {
   const { id } = request.params
   const { title, url, techs } = request.body
 
-  let repo = repositories.find(repo => repo.id === id)
+  let index = repositories.findIndex(repo => repo.id === id)
 
-  if (repo === undefined) {
+  if (index === -1) {
     return response.status(400).send()
   }
 
-  repo = {
-    ...repo,
+  let repo = {
+    ...repositories[index],
     title,
     url,
-    techs
+    techs,
   }
+
+  repositories[index] = repo
 
   response.status(200).json(repo)
 })
@@ -65,12 +67,13 @@ app.delete('/repositories/:id', (request, response) => {
 app.post('/repositories/:id/like', (request, response) => {
   const { id } = request.params
 
-  let repo = repositories.find(repo => repo.id === id)
+  let index = repositories.findIndex(repo => repo.id === id)
 
-  if (repo === undefined) {
+  if (index === -1) {
     return response.status(400).send()
   }
 
+  let repo = repositories[index]
   repo.likes += 1
 
   response.status(201).json(repo)
